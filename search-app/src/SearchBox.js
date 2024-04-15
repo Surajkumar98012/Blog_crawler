@@ -10,7 +10,7 @@ function SearchBox({ onSearch }) {
   const handleInputChange = async (value) => {
     setSearchQuery(value);
     try {
-      const response = await axios.get(`http://localhost:8000/api/recommended-words/?query=${value}`);
+      const response = await axios.get(`https://api.datamuse.com/sug?s=${value}`);
       setRecommendedWords(response.data);
       setShowRecommendedWords(true);
     } catch (error) {
@@ -58,11 +58,12 @@ function SearchBox({ onSearch }) {
       />
       {showRecommendedWords && searchQuery && (
         <ul className="recommended-list">
-          {recommendedWords.map((word, index) => (
-            <li key={index} onClick={() => handleWordSelect(word)}>
-              {word}
+           {recommendedWords.map((wordObj, index) => (
+            <li key={index} onClick={() => handleWordSelect(wordObj.word)}>
+             {wordObj.word}
             </li>
-          ))}
+           ))}
+
         </ul>
       )}
     </div>

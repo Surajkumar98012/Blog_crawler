@@ -5,7 +5,7 @@ function CrawledData({ crawledData, currentTag }) {
   const isValidData = Array.isArray(crawledData) && crawledData.every(item => typeof item === 'object');
 
   return (
-    <div className="crawled-data">z
+    <div className="crawled-data">
       <h2>Crawled Data for Tag: {currentTag}</h2>
       {isValidData ? (
         <ul>

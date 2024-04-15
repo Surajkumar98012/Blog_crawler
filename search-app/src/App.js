@@ -6,20 +6,10 @@ import axios from 'axios';
 import './App.css';
 
 function App() {
-  const [recommendedWords, setRecommendedWords] = useState([]);
+  //const [recommendedWords, setRecommendedWords] = useState([]);
   const [crawledData, setCrawledData] = useState([]);
   const [currentTag, setCurrentTag] = useState('');
   const [loading, setLoading] = useState(true); // Add loading state
-
-  const fetchRecommendedWords = async (query) => {
-    try {
-      const response = await axios.get(`https://api.datamuse.com/sug?s=${query}`);
-      const words = response.data.map((item) => item.word);
-      setRecommendedWords(words);
-    } catch (error) {
-      console.error('Error fetching recommended words:', error);
-    }
-  };
 
   const fetchCrawledData = async (tag) => {
     try {
@@ -32,7 +22,6 @@ function App() {
           console.error('Crawled data is not an array:', response.data);
           setCrawledData([]);
         }
-        setCurrentTag(tag);
         setLoading(false); // Set loading to false after data is fetched
       } else {
         // If tag is empty, set crawledData to an empty array and setLoading to false
@@ -49,35 +38,37 @@ function App() {
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true); // Set loading to true before fetching data
-      await fetchCrawledData('');
+      await fetchCrawledData(currentTag); // Fetch data for the current tag
     };
     fetchData();
-  }, []);
+  }, [currentTag]); // Trigger useEffect whenever currentTag changes
 
   const handleSearch = (tag) => {
     const newTag = tag.trim();
     if (newTag) {
       setCurrentTag(newTag);
-      fetchCrawledData(newTag);
     } else {
       console.error('Invalid tag:', newTag);
     }
   };
 
   return (
-    <div className="container">
-      <h1 className="title">Web Crawler</h1>
-      <SearchBox
-        fetchRecommendedWords={fetchRecommendedWords}
-        recommendedWords={recommendedWords}
-        onSearch={handleSearch}
-      />
-      {loading ? (
-        <p>Loading...</p> // Display loading message while fetching data
-      ) : (
-        <CrawledData crawledData={crawledData} currentTag={currentTag} />
-      )}
+<div className="container">
+  <h1 className="title">Web Crawler</h1>
+  <SearchBox
+    onSearch={handleSearch}
+  />
+  {loading ? (
+    <div className="loading-container">
+      <div className="loading-spinner"></div>
+      <p className="loading-text">Crawling data . . . ..</p>
     </div>
+  ) : (
+    <CrawledData crawledData={crawledData} currentTag={currentTag} />
+  )}
+</div>
+
+
   );
 }
 
