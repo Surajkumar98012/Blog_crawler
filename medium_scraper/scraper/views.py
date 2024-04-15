@@ -2,7 +2,6 @@
 import time
 import unicodedata
 from bs4 import BeautifulSoup
-import requests
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from .models import BlogPost
@@ -64,7 +63,7 @@ def extract_blog_data(html_content, tag, unique_contents=None):
 
     blog_data = []
 
-    for post in blog_posts[1:]:
+    for post in blog_posts[2:]:
         author_element = post.find('p', class_='be')
         creator = author_element.text.strip() if author_element else "Unknown Author"
         creator = remove_unicode_escape_sequences(creator)

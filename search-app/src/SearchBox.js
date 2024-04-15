@@ -5,14 +5,15 @@ function SearchBox({ onSearch }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [recommendedWords, setRecommendedWords] = useState([]);
   const [showRecommendedWords, setShowRecommendedWords] = useState(false);
+  const [loading, setLoading] = useState(false);
   const searchRef = useRef(null);
 
   const handleInputChange = async (value) => {
     setSearchQuery(value);
+    setShowRecommendedWords(true); // Always show recommended words when input changes
     try {
       const response = await axios.get(`https://api.datamuse.com/sug?s=${value}`);
       setRecommendedWords(response.data);
-      setShowRecommendedWords(true);
     } catch (error) {
       console.error('Error fetching recommended words:', error);
     }
@@ -24,17 +25,29 @@ function SearchBox({ onSearch }) {
     onSearch(word);
   };
 
-  const handleKeyDown = (event) => {
+  const handleKeyDown = async (event) => {
     if (event.key === 'Enter') {
-      if (recommendedWords.length > 0) {
-        handleWordSelect(recommendedWords[0]);
+      if (searchQuery) {
+        onSearch(searchQuery);
+        setLoading(true); // Set loading state
+        //setShowRecommendedWords(true);
+        //setSearchQuery('');
+        return; // Exit early to avoid further API calls
       }
+      
+
     }
   };
 
   const handleClickOutside = (event) => {
     if (searchRef.current && !searchRef.current.contains(event.target)) {
       setShowRecommendedWords(false);
+    }
+  };
+
+  const handleFocus = () => {
+    if (searchQuery && recommendedWords.length > 0) {
+      setShowRecommendedWords(true);
     }
   };
 
@@ -51,19 +64,18 @@ function SearchBox({ onSearch }) {
         type="text"
         placeholder="Enter blog tags..."
         onChange={(e) => handleInputChange(e.target.value)}
-        onFocus={() => setShowRecommendedWords(true)}
+        onFocus={handleFocus}
         onKeyDown={handleKeyDown}
         value={searchQuery}
         className="search-input"
       />
-      {showRecommendedWords && searchQuery && (
+      {showRecommendedWords && searchQuery && !loading && (
         <ul className="recommended-list">
-           {recommendedWords.map((wordObj, index) => (
+          {recommendedWords.map((wordObj, index) => (
             <li key={index} onClick={() => handleWordSelect(wordObj.word)}>
-             {wordObj.word}
+              {wordObj.word}
             </li>
-           ))}
-
+          ))}
         </ul>
       )}
     </div>
