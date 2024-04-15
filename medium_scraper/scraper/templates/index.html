@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Medium Crawler</title>
+</head>
+<body>
+    <h1>Medium Blog Posts</h1>
+    <ol>
+        {% for post in posts %}
+        <li>
+            <h2>{{ post.title }}</h2>
+            <p>{{ post.content }}</p>
+            <p>Creator: {{ post.creator }}</p>
+            <p>Tags: {{ post.tags }}</p>
+            <p>Responses: {{ post.responses }}</p>
+        </li>
+        {% endfor %}
+    </ol>
+</body>
+</html>
