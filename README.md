@@ -15,6 +15,7 @@ Before running this application, ensure you have the following prerequisites ins
 
 ```bash
 git clone https://github.com/Surajkumar98012/Blog_crawler.git
+cd Blog_crawler
 ```
 2. Install backend dependencies and start server:
 
