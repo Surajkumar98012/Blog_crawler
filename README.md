@@ -14,5 +14,5 @@ Before running this application, ensure you have the following prerequisites ins
 1. Clone this repository to your local machine:
 
 ```bash
-git clone <repository-url>
-cd <repository-directory>
+git clone https://github.com/Surajkumar98012/Blog_crawler.git
+cd 
