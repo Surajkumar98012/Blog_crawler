@@ -15,4 +15,22 @@ Before running this application, ensure you have the following prerequisites ins
 
 ```bash
 git clone https://github.com/Surajkumar98012/Blog_crawler.git
-cd 
+```
+2. Install backend dependencies and start server:
+
+```bash
+cd medium_scraper
+pip install -r requirements.txt
+
+python manage.py migrate
+python manage.py runserver
+
+```
+3. Install Frontend dependencies and start server:
+
+```bash
+cd search-app
+npm start
+```
+open the browser and run the app on http://localhost:3000/
+
