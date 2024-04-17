@@ -1,5 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
-import axios from 'axios';
+import React, { useState, useRef, useEffect,useCallback } from 'react';
 
 function SearchBox({ onSearch }) {
   const [searchQuery, setSearchQuery] = useState('');
@@ -8,16 +7,33 @@ function SearchBox({ onSearch }) {
   const [loading, setLoading] = useState(false);
   const searchRef = useRef(null);
 
-  const handleInputChange = async (value) => {
+  const handleInputChange = useCallback(async (value) => {
     setSearchQuery(value);
     setShowRecommendedWords(true); // Always show recommended words when input changes
-    try {
-      const response = await axios.get(`https://api.datamuse.com/sug?s=${value}`);
-      setRecommendedWords(response.data);
-    } catch (error) {
-      console.error('Error fetching recommended words:', error);
+    const newTag = value.trim();
+    const isValidTag = /^[a-zA-Z]+$/.test(newTag); // Regex to match letters
+    if (newTag && isValidTag) {
+      try {
+        const response = await fetch(`https://api.datamuse.com/sug?s=${newTag}`);
+        if (response.ok) {
+          const data = await response.json();
+          if (data.length > 0) {
+            setSearchQuery(newTag);
+            setRecommendedWords(data)
+          } else {
+            console.error('Invalid tag:', newTag);
+            //alert('Please enter a valid tag.');
+          }
+        } 
+      } catch (error) {
+        console.error('Error validating tag:', error);
+        alert('Error validating tag. Please try again.');
+      }
+    } else {
+      console.error('Invalid tag:', newTag);
+      //alert('Please enter a valid tag.');
     }
-  };
+  },[]);
 
   const handleWordSelect = (word) => {
     setSearchQuery(word);
@@ -30,12 +46,8 @@ function SearchBox({ onSearch }) {
       if (searchQuery) {
         onSearch(searchQuery);
         setLoading(true); // Set loading state
-        //setShowRecommendedWords(true);
-        //setSearchQuery('');
         return; // Exit early to avoid further API calls
       }
-      
-
     }
   };
 

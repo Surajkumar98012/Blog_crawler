@@ -29,8 +29,9 @@ function App() {
         setLoading(false);
       }
     } catch (error) {
-      console.error('Error fetching crawled data:', error);
       setLoading(false); // Set loading to false if there's an error
+      console.error('Error fetching crawled data:', error);
+      alert('Please enter a valid tag.');
     }
   };
   
