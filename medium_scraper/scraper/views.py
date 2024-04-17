@@ -6,15 +6,24 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from .models import BlogPost
 from django.http import JsonResponse
-from django.db import IntegrityError
 
 def save_to_database(data):
     for post in data:
-        try:
+        creator = post['creator']
+        title = post['title']
+        content = post['content']
+
+        # Check if a post with the same unique identifier already exists
+        existing_post = BlogPost.objects.filter(creator=creator, title=title, content=content).first()
+
+        if existing_post:
+            # If the post already exists, update it with the latest data
+            existing_post.responses = post['responses']
+            existing_post.save()
+        else:
+            # If the post doesn't exist, create a new one
             BlogPost.objects.create(**post)
-        except IntegrityError:
-            # If the post already exists, ignore and continue
-            pass
+
 
 def crawl_tag_page(request, tag, scroll_times=3):
     chrome_options = Options()
@@ -81,7 +90,7 @@ def extract_blog_data(html_content, tag, unique_contents=None):
         comment_element = post.find('span', class_='pw-responses-count')
         responses = comment_element.text.strip() if comment_element else "No Comment Information Available"
         
-        if creator == "Unknown Author" or title == "Untitled":
+        if creator == "Unknown Author" or title == "Untitled" or creator == "Recommended stories":
             continue
 
         content_identifier = f"{creator}-{title}-{content}"

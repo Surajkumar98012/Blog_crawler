@@ -1,39 +1,41 @@
-import React, { useState, useRef, useEffect,useCallback } from 'react';
+import React, { useState, useRef, useEffect } from "react";
 
 function SearchBox({ onSearch }) {
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [recommendedWords, setRecommendedWords] = useState([]);
   const [showRecommendedWords, setShowRecommendedWords] = useState(false);
   const [loading, setLoading] = useState(false);
   const searchRef = useRef(null);
 
-  const handleInputChange = useCallback(async (value) => {
+  const handleInputChange = async (value) => {
     setSearchQuery(value);
     setShowRecommendedWords(true); // Always show recommended words when input changes
     const newTag = value.trim();
     const isValidTag = /^[a-zA-Z]+$/.test(newTag); // Regex to match letters
     if (newTag && isValidTag) {
       try {
-        const response = await fetch(`https://api.datamuse.com/sug?s=${newTag}`);
+        const response = await fetch(
+          `https://api.datamuse.com/sug?s=${newTag}`
+        );
         if (response.ok) {
           const data = await response.json();
           if (data.length > 0) {
-            setSearchQuery(newTag);
-            setRecommendedWords(data)
+            //setSearchQuery(newTag);
+            setRecommendedWords(data);
           } else {
-            console.error('Invalid tag:', newTag);
+            console.error("Invalid tag:", newTag);
             //alert('Please enter a valid tag.');
           }
-        } 
+        }
       } catch (error) {
-        console.error('Error validating tag:', error);
-        alert('Error validating tag. Please try again.');
+        console.error("Error validating tag:", error);
+        alert("Error validating tag. Please try again.");
       }
     } else {
-      console.error('Invalid tag:', newTag);
+      console.error("Invalid tag:", newTag);
       //alert('Please enter a valid tag.');
     }
-  },[]);
+  };
 
   const handleWordSelect = (word) => {
     setSearchQuery(word);
@@ -42,7 +44,7 @@ function SearchBox({ onSearch }) {
   };
 
   const handleKeyDown = async (event) => {
-    if (event.key === 'Enter') {
+    if (event.key === "Enter") {
       if (searchQuery) {
         onSearch(searchQuery);
         setLoading(true); // Set loading state
@@ -64,9 +66,9 @@ function SearchBox({ onSearch }) {
   };
 
   useEffect(() => {
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
 
