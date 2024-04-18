@@ -26,7 +26,6 @@ function CrawledData({ crawledData, currentTag }) {
               <p>
                 <span>Responses:</span> {data.responses}
               </p>
-              {/* Render other data fields as needed */}
             </li>
           ))}
         </ul>
