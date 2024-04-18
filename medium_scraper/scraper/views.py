@@ -1,9 +1,6 @@
-# views.py
-import time
 import unicodedata
 from bs4 import BeautifulSoup
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
+import requests
 from .models import BlogPost
 from django.http import JsonResponse
 
@@ -13,64 +10,39 @@ def save_to_database(data):
         title = post['title']
         content = post['content']
 
-        # Check if a post with the same unique identifier already exists
         existing_post = BlogPost.objects.filter(creator=creator, title=title, content=content).first()
 
         if existing_post:
-            # If the post already exists, update it with the latest data
             existing_post.responses = post['responses']
             existing_post.save()
         else:
-            # If the post doesn't exist, create a new one
             BlogPost.objects.create(**post)
 
-
-def crawl_tag_page(request, tag, scroll_times=3):
-    chrome_options = Options()
-    chrome_options.add_argument("--headless")
-    chrome_options.add_argument("--log-level=3")
-    chrome_options.add_experimental_option("excludeSwitches", ["enable-logging"])
-
-    driver = webdriver.Chrome(options=chrome_options)
-
+def crawl_tag_page(request, tag):
     url = f"https://medium.com/tag/{tag}/recommended"
-    driver.get(url)
-    time.sleep(0.5)
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3"
+    }
 
-    html_content = driver.page_source
+    try:
+        response = requests.get(url, headers=headers)
+        response.raise_for_status()
+        html_content = response.content
+    except requests.exceptions.RequestException as e:
+        return JsonResponse({'error': 'Failed to fetch data'}, status=500)
 
     extracted_data, unique_contents = extract_blog_data(html_content, tag)
     print(f"Extracted {len(extracted_data)} blog posts")
 
     save_to_database(extracted_data)
+    return JsonResponse(extracted_data, safe=False)
 
-    response_data = extracted_data
-
-    for _ in range(1, scroll_times):
-        driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-        time.sleep(0.5)
-
-        html_content = driver.page_source
-
-        new_data, _ = extract_blog_data(html_content, tag, unique_contents)
-        print(f"Extracted {len(new_data)} blog posts")
-
-        save_to_database(new_data)
-
-        response_data += new_data
-
-    driver.quit()
-
-    return JsonResponse(response_data, safe=False)
-
-def extract_blog_data(html_content, tag, unique_contents=None):
-    if unique_contents is None:
-        unique_contents = set()
-
+def extract_blog_data(html_content, tag):
     soup = BeautifulSoup(html_content, 'html.parser')
     blog_posts = soup.find_all('div', class_='bg')
 
     blog_data = []
+    unique_contents = set()
 
     for post in blog_posts[2:]:
         author_element = post.find('p', class_='be')
@@ -122,4 +94,3 @@ def get_crawled_data(request):
         return JsonResponse(crawled_data, safe=False)
     else:
         return JsonResponse({'error': 'Method not allowed'}, status=405)
-
