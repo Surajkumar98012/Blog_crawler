@@ -19,23 +19,23 @@ body{
 
 .search-container {
   position: relative;
-  width: 600px; /* Adjust width as needed */
+  width: 600px; 
   display: flex;
   flex-direction: column;
-  align-items: flex-start; /* Align children to the top */
-  margin-top: 20px; /* Add margin to separate from title */
+  align-items: flex-start; 
+  margin-top: 20px; 
 }
 
 .search-input {
   width: 100%;
   color: white;
   background-color: #4a4a4a;
-  padding: 13px 17px; /* Adjust padding as needed */
-  font-size: 18px; /* Adjust font size as needed */
-  border: 1px solid #4a4a4a; /* Google's border color */
-  border-radius: 24px; /* Google's border radius */
-  box-shadow: 0 4px 6px rgba(32, 33, 36, 0.1); /* Google's box shadow */
-  outline: none; /* Remove default outline */
+  padding: 13px 17px; 
+  font-size: 18px; 
+  border: 1px solid #4a4a4a; 
+  border-radius: 24px; 
+  box-shadow: 0 4px 6px rgba(32, 33, 36, 0.1); 
+  outline: none; 
 }
 
 .recommended-list {
@@ -86,64 +86,23 @@ body{
 }
 
 .crawled-data li {
-  border-radius: 4px;
+  border-radius: 20px;
   padding: 10px;
   margin-bottom: 20px;
-  width: calc(24% - 20px); /* Three flex items in a row with margin in between */
-  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37); /* Initial box shadow */
-  backdrop-filter: blur(2px);
+  width: calc(24% - 20px); 
+  box-shadow: 0 5px 30px 0 ;
+  backdrop-filter: blur(3px);
   -webkit-backdrop-filter: blur(2px);
-  background-color: rgba(255, 255, 255, 0.4);
-  background-repeat: repeat; /* Repeat the background image */
+  background-color: rgba(255, 255, 255, 0.541);
+  background-repeat: repeat; 
   transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease; /* Transition on hover */
-  position: relative; /* Position for pseudo-element */
-}
-
-.crawled-data li::before {
-  content: '';
-  position: absolute;
-  top: -2px;
-  left: -2px;
-  right: -2px;
-  bottom: -2px;
-  border-radius: 4px;
-  z-index: -1;
-  transition: opacity 0.3s ease; /* Transition for opacity */
+  position: relative; 
 }
 
 .crawled-data li:hover {
-  transform: translateY(-10px) rotateX(5deg) rotateY(5deg);
-  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.1); /* Updated box shadow on hover */
+  transform: translateY(-15px);
   background-color: rgba(235, 232, 232, 0.856);
 }
-
-.crawled-data li:hover::before {
-  animation: glow 4s infinite alternate; /* Animation for colorful glow */
-}
-
-@keyframes glow {
-  0% {
-    opacity: 0;
-    box-shadow: 0 0 20px rgba(255, 0, 0, 0.5); /* Red glow */
-  }
-  25% {
-    opacity: 1;
-    box-shadow: 0 0 20px rgba(255, 255, 0, 0.5); /* Yellow glow */
-  }
-  50% {
-    opacity: 1;
-    box-shadow: 0 0 30px rgba(0, 255, 0, 0.5); /* Green glow */
-  }
-  75% {
-    opacity: 0.5;
-    box-shadow: 0 0 20px rgba(0, 0, 255, 0.5); /* Blue glow */
-  }
-  100% {
-    opacity: 0;
-    box-shadow: 0 0 10px rgba(255, 0, 255, 0.5); /* Purple glow */
-  }
-}
-
 
 .crawled-data h3 {
   margin-top: 0;
